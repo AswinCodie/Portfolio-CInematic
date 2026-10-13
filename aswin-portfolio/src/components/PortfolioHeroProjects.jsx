@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -35,10 +35,10 @@ const technologies = [
 const projects = [
   {
     number: "01",
-    title: "Campus Canteen",
+    title: "Campus Bites",
     description:
       "A multi-college food ordering system with menus, order tracking, and an admin dashboard.",
-    image: "/public/campusbites.png",
+    image: "/campusbites.png",
     tags: ["Python", "Flask", "Flutter", "Database"],
     accent: "canteen",
     href: "#contact",
@@ -48,7 +48,7 @@ const projects = [
     title: "WayPost",
     description:
       "A location-based web experience to discover places, share useful information, and explore.",
-    image: "/public/waypost.png",
+    image: "/waypost.png",
     tags: ["React", "Maps API", "Web App"],
     accent: "waypost",
     href: "https://way-post-app.vercel.app/",
@@ -58,7 +58,7 @@ const projects = [
     title: "EDUCHAT AI",
     description:
       "An AI-powered student assistant with Gemini API,English & Malayalam conversations, chat history, and study resources.",
-    image: "/public/educhat.png",
+    image: "/educhat.png",
     tags: ["Html/Css", "Gemini API", "Javascript", "AI Chatbot"],
     accent: "ai",
     href: "https://aibot-kmct.onrender.com/user/home.html",
@@ -71,40 +71,41 @@ const stats = [
   { value: "100%", label: "Passion", symbol: "✳" },
 ];
 
-function FloatingTechIcon({ tech, index, reducedMotion, pointerX, pointerY }) {
+
+function FloatingTechIcon({
+  tech,
+  index,
+  reducedMotion,
+  pointerX,
+  pointerY,
+}) {
   const { Icon, label, className } = tech;
 
-  const x = useTransform(pointerX, (value) => value * (index % 2 ? -0.5 : 0.5));
-  const y = useTransform(pointerY, (value) => value * (index % 2 ? 0.4 : -0.4));
+  // Different strengths create depth between the icons.
+  const depth = 12 + (index % 4) * 9;
+
+  const x = useTransform(
+    pointerX,
+    (value) => value * depth * (index % 2 === 0 ? 1 : -1)
+  );
+
+  const y = useTransform(
+    pointerY,
+    (value) => value * depth * (index % 3 === 0 ? -1 : 1)
+  );
 
   return (
     <motion.div
       className={`tech-float tech-float--${index + 1} ${className}`}
-      initial={{ opacity: 0, scale: 0.65, y: 28 }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-        y: reducedMotion ? 0 : [0, -13, 0, 9, 0],
-        rotateZ: reducedMotion ? 0 : [0, 4, -3, 2, 0],
-      }}
+      initial={{ opacity: 0, scale: 0.85 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{
-        opacity: { duration: 0.65, delay: 0.2 + index * 0.08 },
-        scale: { duration: 0.65, delay: 0.2 + index * 0.08 },
-        y: {
-          duration: 5 + (index % 3),
-          repeat: reducedMotion ? 0 : Infinity,
-          ease: "easeInOut",
-          delay: index * 0.25,
-        },
-        rotateZ: {
-          duration: 7 + (index % 4),
-          repeat: reducedMotion ? 0 : Infinity,
-          ease: "easeInOut",
-        },
+        opacity: { duration: 0.6, delay: 0.2 + index * 0.07 },
+        scale: { duration: 0.6, delay: 0.2 + index * 0.07 },
       }}
       style={{
         x: reducedMotion ? 0 : x,
-        translateY: reducedMotion ? 0 : y,
+        y: reducedMotion ? 0 : y,
       }}
       aria-label={label}
       title={label}
@@ -116,6 +117,7 @@ function FloatingTechIcon({ tech, index, reducedMotion, pointerX, pointerY }) {
   );
 }
 
+
 function HeroPortrait({ reducedMotion, pointerX, pointerY }) {
   const portraitX = useTransform(pointerX, (value) => value * 0.22);
   const portraitY = useTransform(pointerY, (value) => value * 0.16);
@@ -123,18 +125,11 @@ function HeroPortrait({ reducedMotion, pointerX, pointerY }) {
   return (
     <motion.div
       className="hero-portrait"
-      initial={{ opacity: 0, y: 35 }}
-      animate={{
-        opacity: 1,
-        y: reducedMotion ? 0 : [0, -9, 0, 5, 0],
-      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{
-        opacity: { duration: 0.9, delay: 0.15 },
-        y: {
-          duration: 6,
-          repeat: reducedMotion ? 0 : Infinity,
-          ease: "easeInOut",
-        },
+        opacity: { duration: 0.8, delay: 0.15 },
+        y: { duration: 0.8, delay: 0.15, ease: "easeOut" },
       }}
       style={{
         x: reducedMotion ? 0 : portraitX,
@@ -145,7 +140,7 @@ function HeroPortrait({ reducedMotion, pointerX, pointerY }) {
 
       <img
         className="portrait-image"
-        src="/public/aswin-cutout.png"
+        src="/aswin-cutout.png"
         alt="Aswin, Python full-stack developer"
         fetchPriority="high"
       />
@@ -209,22 +204,24 @@ function ProjectCard({ project, index, reducedMotion }) {
 
 export default function PortfolioHeroProjects() {
   const heroRef = useRef(null);
+  const projectsRef = useRef(null);
   const reducedMotion = useReducedMotion();
+  const [activeProject, setActiveProject] = useState(0);
 
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
 
-  const pointerX = useSpring(rawX, {
-    stiffness: 90,
-    damping: 22,
-    mass: 0.5,
-  });
+const pointerX = useSpring(rawX, {
+  stiffness: 100,
+  damping: 24,
+  mass: 0.6,
+});
 
-  const pointerY = useSpring(rawY, {
-    stiffness: 90,
-    damping: 22,
-    mass: 0.5,
-  });
+const pointerY = useSpring(rawY, {
+  stiffness: 100,
+  damping: 24,
+  mass: 0.6,
+});
 
   function handlePointerMove(event) {
     if (reducedMotion || window.innerWidth < 768) return;
@@ -239,6 +236,28 @@ export default function PortfolioHeroProjects() {
   function resetPointer() {
     rawX.set(0);
     rawY.set(0);
+  }
+
+  function updateActiveProject() {
+    const container = projectsRef.current;
+    if (!container) return;
+
+    const cardWidth = container.querySelector(".project-card")?.offsetWidth;
+    if (!cardWidth) return;
+
+    const gap = Number.parseFloat(getComputedStyle(container).gap) || 0;
+    setActiveProject(
+      Math.max(0, Math.min(projects.length - 1, Math.round(container.scrollLeft / (cardWidth + gap))))
+    );
+  }
+
+  function goToProject(index) {
+    const container = projectsRef.current;
+    if (!container) return;
+
+    const card = container.querySelectorAll(".project-card")[index];
+    card?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest", inline: "start" });
+    setActiveProject(index);
   }
 
   return (
@@ -284,9 +303,32 @@ export default function PortfolioHeroProjects() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <h1 className="hero-title">
-              <span>I BUILD</span>
-              <span>DIGITAL</span>
-              <span>EXPERIENCES</span>
+              {["I BUILD", "DIGITAL", "EXPERIENCES"].map((line, index) => (
+                <span className="hero-title-line" key={line}>
+                  <motion.span
+                    className={`hero-title-inner ${
+                      index === 2 ? "hero-title-accent" : ""
+                    }`}
+                    initial={
+                      reducedMotion
+                        ? { opacity: 0 }
+                        : { opacity: 0, y: 70, filter: "blur(8px)" }
+                    }
+                    animate={
+                      reducedMotion
+                        ? { opacity: 1 }
+                        : { opacity: 1, y: 0, filter: "blur(0px)" }
+                    }
+                    transition={{
+                      duration: reducedMotion ? 0 : 0.9,
+                      delay: reducedMotion ? 0 : 0.15 + index * 0.17,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
             </h1>
 
             <p className="hero-subtitle">
@@ -342,6 +384,16 @@ export default function PortfolioHeroProjects() {
               Repeat.
             </div>
           </div>
+
+          <div className="hero-actions hero-actions--mobile" aria-label="Hero actions">
+            <a className="button-primary" href="#projects">
+              Explore Projects <span>â†’</span>
+            </a>
+
+            <a className="button-secondary" href="#contact">
+              Let&apos;s Connect
+            </a>
+          </div>
         </div>
 
         <div className="stats-bar">
@@ -371,7 +423,12 @@ export default function PortfolioHeroProjects() {
           </a>
         </div>
 
-        <div className="projects-grid">
+        <div
+          ref={projectsRef}
+          className="projects-grid"
+          onScroll={updateActiveProject}
+          aria-label="Selected projects"
+        >
           {projects.map((project, index) => (
             <ProjectCard
               key={project.number}
@@ -382,9 +439,39 @@ export default function PortfolioHeroProjects() {
           ))}
         </div>
 
-        <div className="projects-footer">
-          <span>DESIGNED WITH INTENTION.</span>
-          <span>BUILT TO BE USEFUL.</span>
+        <div className="projects-mobile-navigation" aria-label="Project carousel controls">
+          <button
+            type="button"
+            className="projects-carousel-button"
+            onClick={() => goToProject(activeProject - 1)}
+            disabled={activeProject === 0}
+            aria-label="Previous project"
+          >
+            <span aria-hidden="true">←</span>
+          </button>
+
+          <div className="projects-pagination" aria-label={`Project ${activeProject + 1} of ${projects.length}`}>
+            {projects.map((project, index) => (
+              <button
+                key={project.number}
+                type="button"
+                className={index === activeProject ? "is-active" : ""}
+                onClick={() => goToProject(index)}
+                aria-label={`Show ${project.title}`}
+                aria-current={index === activeProject ? "true" : undefined}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="projects-carousel-button"
+            onClick={() => goToProject(activeProject + 1)}
+            disabled={activeProject === projects.length - 1}
+            aria-label="Next project"
+          >
+            <span aria-hidden="true">→</span>
+          </button>
         </div>
       </section>
     </main>

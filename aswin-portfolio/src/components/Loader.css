@@ -1,0 +1,78 @@
+.portfolio-loader {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #d9f879;
+  background: #100606;
+  opacity: 1;
+  transition: opacity 280ms ease, visibility 280ms ease;
+}
+
+.portfolio-loader--exiting {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.portfolio-loader__prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38em;
+  color: inherit;
+  font-family: "Space Grotesk", monospace;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  animation: loader-prompt-in 360ms ease-out both;
+}
+
+.portfolio-loader__prompt-mark {
+  color: #f5eee5;
+}
+
+.portfolio-loader__cursor {
+  width: 0.52em;
+  height: 1.05em;
+  background: currentColor;
+  animation: loader-cursor 700ms steps(1, end) infinite;
+}
+
+@keyframes loader-prompt-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes loader-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+.app-content {
+  opacity: 1;
+  transition: opacity 360ms ease;
+}
+
+.app-content--loading {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-loader,
+  .app-content {
+    transition: none;
+  }
+
+  .portfolio-loader__prompt,
+  .portfolio-loader__cursor {
+    animation: none;
+  }
+}

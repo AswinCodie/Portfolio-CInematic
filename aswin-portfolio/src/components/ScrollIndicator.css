@@ -1,0 +1,99 @@
+
+.scroll-ruler {
+  position: fixed;
+  z-index: 9999;
+  top: 10%;
+  right: 10px;
+  bottom: 10%;
+  width: 22px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  pointer-events: none;
+  opacity: 1;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+.scroll-ruler__tick {
+  display: block;
+  width: 14px;
+  height: 1px;
+  flex: 0 0 1px;
+  background: rgba(70, 70, 70, 0.4);
+}
+
+.scroll-ruler__tick:nth-child(4n + 1) {
+  width: 20px;
+}
+
+.scroll-ruler__tick--active {
+  width: 22px;
+  background: #242424;
+}
+
+.scroll-ruler__marker {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 3px;
+  border-radius: 3px;
+  background: #242424;
+  transform: translateY(-50%);
+}
+
+.page-progress {
+  position: fixed;
+  z-index: 10000;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #d9f879;
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .scroll-ruler {
+    right: 5px;
+    width: 16px;
+  }
+
+  .scroll-ruler__tick {
+    width: 10px;
+  }
+
+  .scroll-ruler__tick:nth-child(4n + 1) {
+    width: 14px;
+  }
+
+  .scroll-ruler__tick--active,
+  .scroll-ruler__marker {
+    width: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-ruler__tick {
+    transition: none;
+  }
+}
