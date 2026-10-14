@@ -1,6 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  animate,
   motion,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useSpring,
@@ -66,11 +68,53 @@ const projects = [
 ];
 
 const stats = [
-  { value: "08+", label: "Projects", symbol: "↗" },
-  { value: "10+", label: "Technologies", symbol: "</>" },
-  { value: "100%", label: "Passion", symbol: "✳" },
+  { value: 8, suffix: "+", label: "Projects", symbol: "↗", pad: 2 },
+  { value: 10, suffix: "+", label: "Technologies", symbol: "</>" },
+  { value: 100, suffix: "%", label: "Passion", symbol: "✳" },
 ];
 
+const floatingProfiles = [
+  { y: [0, -7, 0, 4, 0], rotate: [-10, -7, -12, -8, -10], duration: 5.8 },
+  { y: [0, 6, 0, -5, 0], rotate: [11, 14, 8, 13, 11], duration: 6.4 },
+  { y: [0, -5, 0, 6, 0], rotate: [-9, -6, -11, -7, -9], duration: 5.4 },
+  { y: [0, 7, 0, -4, 0], rotate: [13, 10, 16, 11, 13], duration: 6.1 },
+  { y: [0, -6, 0, 4, 0], rotate: [-12, -9, -14, -10, -12], duration: 6.7 },
+  { y: [0, 5, 0, -6, 0], rotate: [10, 13, 7, 12, 10], duration: 5.9 },
+  { y: [0, -4, 0, 5, 0], rotate: [-12, -9, -14, -10, -12], duration: 6.3 },
+  { y: [0, 6, 0, -4, 0], rotate: [10, 13, 7, 12, 10], duration: 5.6 },
+];
+
+
+function StatValue({ stat, isInView, reducedMotion }) {
+  const formatValue = (value) =>
+    stat.pad ? String(value).padStart(stat.pad, "0") : value;
+
+  if (!isInView) {
+    return <strong>{formatValue(0)}{stat.suffix}</strong>;
+  }
+
+  if (reducedMotion) {
+    return <strong>{formatValue(stat.value)}{stat.suffix}</strong>;
+  }
+
+  return <CountingStatValue stat={stat} formatValue={formatValue} />;
+}
+
+function CountingStatValue({ stat, formatValue }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const controls = animate(0, stat.value, {
+      duration: 1.1,
+      ease: "easeOut",
+      onUpdate: (latest) => setDisplayValue(Math.round(latest)),
+    });
+
+    return () => controls.stop();
+  }, [stat.value]);
+
+  return <strong>{formatValue(displayValue)}{stat.suffix}</strong>;
+}
 
 function FloatingTechIcon({
   tech,
@@ -80,6 +124,8 @@ function FloatingTechIcon({
   pointerY,
 }) {
   const { Icon, label, className } = tech;
+  const floatingProfile = floatingProfiles[index];
+  const baseRotation = floatingProfile.rotate[0];
 
   // Different strengths create depth between the icons.
   const depth = 12 + (index % 4) * 9;
@@ -96,13 +142,9 @@ function FloatingTechIcon({
 
   return (
     <motion.div
-      className={`tech-float tech-float--${index + 1} ${className}`}
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        opacity: { duration: 0.6, delay: 0.2 + index * 0.07 },
-        scale: { duration: 0.6, delay: 0.2 + index * 0.07 },
-      }}
+      className={`tech-float tech-float--${index + 1} ${className} ${
+        index < 4 ? "tech-float--behind-portrait" : ""
+      }`}
       style={{
         x: reducedMotion ? 0 : x,
         y: reducedMotion ? 0 : y,
@@ -110,9 +152,44 @@ function FloatingTechIcon({
       aria-label={label}
       title={label}
     >
-      <div className="tech-icon__face">
-        <Icon aria-hidden="true" />
-      </div>
+      <motion.div
+        className="tech-float__motion"
+        initial={reducedMotion ? false : { opacity: 0, scale: 0.85 }}
+        animate={
+          reducedMotion
+            ? { opacity: 1, scale: 1, y: 0, rotate: baseRotation }
+            : {
+                opacity: 1,
+                scale: 1,
+                y: floatingProfile.y,
+                rotate: floatingProfile.rotate,
+              }
+        }
+        transition={
+          reducedMotion
+            ? { duration: 0 }
+            : {
+                opacity: { duration: 0.6, delay: 0.2 + index * 0.07 },
+                scale: { duration: 0.6, delay: 0.2 + index * 0.07 },
+                y: {
+                  duration: floatingProfile.duration,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.2,
+                },
+                rotate: {
+                  duration: floatingProfile.duration * 1.25,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.16,
+                },
+              }
+        }
+      >
+        <div className="tech-icon__face">
+          <Icon aria-hidden="true" />
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -202,11 +279,14 @@ function ProjectCard({ project, index, reducedMotion }) {
   );
 }
 
-export default function PortfolioHeroProjects() {
+export default function PortfolioHeroProjects({ isReady = true }) {
   const heroRef = useRef(null);
   const projectsRef = useRef(null);
+  const statsRef = useRef(null);
   const reducedMotion = useReducedMotion();
   const [activeProject, setActiveProject] = useState(0);
+  const statsInView = useInView(statsRef, { amount: 0.6 });
+  const shouldCountStats = isReady && statsInView;
 
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
@@ -387,7 +467,7 @@ const pointerY = useSpring(rawY, {
 
           <div className="hero-actions hero-actions--mobile" aria-label="Hero actions">
             <a className="button-primary" href="#projects">
-              Explore Projects <span>â†’</span>
+              Explore Projects <span></span>
             </a>
 
             <a className="button-secondary" href="#contact">
@@ -396,13 +476,17 @@ const pointerY = useSpring(rawY, {
           </div>
         </div>
 
-        <div className="stats-bar">
+        <div ref={statsRef} className="stats-bar">
           {stats.map((stat) => (
             <div className="stat-item" key={stat.label}>
               <span className="stat-symbol">{stat.symbol}</span>
               <div>
                 <span className="stat-label">{stat.label}</span>
-                <strong>{stat.value}</strong>
+                <StatValue
+                  stat={stat}
+                  isInView={shouldCountStats}
+                  reducedMotion={reducedMotion}
+                />
               </div>
             </div>
           ))}

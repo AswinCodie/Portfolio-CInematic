@@ -402,10 +402,21 @@ a {
 .tech-float {
   position: absolute;
   z-index: 5;
-  display: grid;
-  place-items: center;
   width: clamp(52px, 6vw, 82px);
   aspect-ratio: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tech-float--behind-portrait {
+  z-index: 2;
+}
+
+.tech-float__motion {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
   padding: 9px;
   border: 1px solid rgba(255, 255, 255, 0.23);
   border-radius: 21px;
@@ -434,49 +445,41 @@ a {
 .tech-float--1 {
   top: 9%;
   left: 21%;
-  transform: rotate(-10deg);
 }
 
 .tech-float--2 {
   top: 19%;
   right: 15%;
-  transform: rotate(11deg);
 }
 
 .tech-float--3 {
   top: 37%;
   left: 23%;
-  transform: rotate(-9deg);
 }
 
 .tech-float--4 {
   top: 34%;
   right: 8%;
-  transform: rotate(13deg);
 }
 
 .tech-float--5 {
   bottom: 25%;
   right: 2%;
-  transform: rotate(-12deg);
 }
 
 .tech-float--6 {
   bottom: 25%;
   left: 9%;
-  transform: rotate(10deg);
 }
 
 .tech-float--7 {
   bottom: 13%;
   left: 27%;
-  transform: rotate(-12deg);
 }
 
 .tech-float--8 {
   bottom: 11%;
   right: 24%;
-  transform: rotate(10deg);
 }
 
 .python .tech-icon__face { color: #ffd65c; }
@@ -994,6 +997,9 @@ a {
 
   .tech-float {
     width: clamp(44px, 12vw, 62px);
+  }
+
+  .tech-float__motion {
     padding: 6px;
     border-radius: 15px;
     box-shadow:
@@ -1006,7 +1012,7 @@ a {
     font-size: clamp(24px, 6.5vw, 33px);
   }
 
-  .tech-float--1 { top: 10%; left: 3%; }
+  .tech-float--1 { top: 13%; left: 13%; }
   .tech-float--2 { top: 15%; right: 3%; }
   .tech-float--3 { top: 43%; left: 0; }
   .tech-float--4 { top: 42%; right: 0; }
@@ -1016,6 +1022,8 @@ a {
   .tech-float--8 { display: none; }
 
   .handwritten-note {
+    display:none;
+    z-index:0;
     top: 18%;
     right: 0;
     font-size: 11px;

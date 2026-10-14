@@ -13,9 +13,9 @@ export default function App() {
     <>
       {isLoading && <Loader onComplete={handleLoaderComplete} />}
       <div className={`app-content${isLoading ? " app-content--loading" : ""}`}>
-        <PortfolioHeroProjects />
+        <PortfolioHeroProjects isReady={!isLoading} />
         <AboutSection />
-        <ScrollIndicator />
+        {/* <ScrollIndicator /> */}
         <ContactFooter />
       </div>
     </>
