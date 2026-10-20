@@ -304,7 +304,7 @@ ${form.message}`;
             title="EXPLORE"
             links={[
               ["Resume", "/resume.pdf"],
-              ["GitHub", "https://github.com/"],
+              ["GitHub", "https://github.com/aswinCodie"],
               ["LinkedIn", "https://www.linkedin.com/in/aswin-krishna-p/"],
             ]}
           />

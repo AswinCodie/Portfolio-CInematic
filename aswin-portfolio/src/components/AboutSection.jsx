@@ -121,12 +121,7 @@ export default function AboutSection() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <span className="about-eyebrow">
-            <span>02</span>
-            <i />
-            ABOUT ME
-          </span>
-
+         
           <h2 className="about-title">
             Turning Ideas
             <br />
@@ -201,11 +196,7 @@ export default function AboutSection() {
           viewport={{ once: true, amount: 0.2 }}
         >
           <div className="skills-heading-copy">
-            <span className="about-eyebrow">
-              <span>03</span>
-              <i />
-              SKILLS & TECHNOLOGIES
-            </span>
+        
 
             <h2 className="skills-title">
               Tools I <span>Work With</span>

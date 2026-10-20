@@ -496,7 +496,6 @@ const pointerY = useSpring(rawY, {
       <section className="projects-section" id="projects">
         <div className="projects-heading">
           <div>
-            <span className="eyebrow">SELECTED WORK · 01—03</span>
             <h2>
               Some Things I&apos;ve <span>Built</span>
             </h2>
