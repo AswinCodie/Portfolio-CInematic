@@ -41,7 +41,7 @@ const projects = [
     description:
       "A multi-college food ordering system with menus, order tracking, and an admin dashboard.",
     image: "/campusbites.png",
-    tags: ["Python", "Flask", "Flutter", "Database"],
+    tags: ["HTML/CSS", "JSON", "MongoDB", "Node.js"],
     accent: "canteen",
     href: "#contact",
   },
@@ -383,7 +383,7 @@ const pointerY = useSpring(rawY, {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <h1 className="hero-title">
-              {["I BUILD", "DIGITAL", "EXPERIENCES"].map((line, index) => (
+              {["I BUILD", "DIGITAL", "EXPERIENCES "].map((line, index) => (
                 <span className="hero-title-line" key={line}>
                   <motion.span
                     className={`hero-title-inner ${
