@@ -4,6 +4,7 @@ import ContactFooter from "./components/ContactFooter";
 import Loader from "./components/Loader";
 import PortfolioHeroProjects from "./components/PortfolioHeroProjects";
 import ScrollIndicator from "./components/ScrollIndicator";
+import EducationExperience from "./components/EducationExperience";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +16,7 @@ export default function App() {
       <div className={`app-content${isLoading ? " app-content--loading" : ""}`}>
         <PortfolioHeroProjects isReady={!isLoading} />
         <AboutSection />
+        <EducationExperience/>
         {/* <ScrollIndicator /> */}
         <ContactFooter />
       </div>
