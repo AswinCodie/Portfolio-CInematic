@@ -136,7 +136,7 @@ export default function ProjectsSection() {
                     rel="noopener noreferrer"
                   >
                     Live Demo
-                    <FaArrowUpRightFromSquare />
+                    <FaArrowUdpRightFromSquare />
                   </a>
                 )}
               </div> */}
